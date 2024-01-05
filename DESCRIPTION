@@ -1,0 +1,6 @@
+Package: lightsabeR
+Type: Package
+Title: Light Support (for) A Bioinformatics Enthusiast
+Version: 0.1.0
+Imports: biomaRt, dplyr, ggplot2, FactoMineR
+RoxygenNote: 7.2.3
