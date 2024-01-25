@@ -18,6 +18,7 @@
 #'@param show_column_dend Whether to show the column dendrogram
 #'@param title The title of the plot
 #'@param legend_title The title of the legend
+#'@param cluster_cols Whether to cluster columns or not
 #'
 #'
 #'
@@ -37,7 +38,9 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
                                       show_row_dend = FALSE,
                                       show_column_dend = TRUE,
                                       title = 'WGCNA Module - Trait Correlation',
-                                      legend_title = 'Correlation')
+                                      legend_title = 'Correlation',
+                                      cluster_rows = FALSE,
+                                      cluster_cols = FALSE)
 
 {
     #filtering out P-value columns and converting to a matrix
@@ -71,6 +74,8 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
             column_names_gp = gpar(fontsize = col_label_size), 
             row_names_rot = row_angle,
             column_km = column_km,
+            cluster_rows = cluster_rows,
+            cluster_columns = cluster_cols,
             row_km = row_km,
             show_row_dend = show_row_dend, 
             show_column_dend = show_column_dend, 
@@ -95,6 +100,8 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
             column_names_gp = gpar(fontsize = col_label_size), 
             row_names_rot = row_angle,
             column_km = column_km,
+            cluster_rows = cluster_rows,
+            cluster_columns = cluster_cols,
             row_km = row_km,
             show_row_dend = show_row_dend, 
             show_column_dend = show_column_dend, 

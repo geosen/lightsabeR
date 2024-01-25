@@ -17,7 +17,9 @@ wgcna_module_heatmap_plot(
   show_row_dend = FALSE,
   show_column_dend = TRUE,
   title = "WGCNA Module - Trait Correlation",
-  legend_title = "Correlation"
+  legend_title = "Correlation",
+  cluster_rows = FALSE,
+  cluster_cols = FALSE
 )
 }
 \arguments{
@@ -46,6 +48,8 @@ wgcna_module_heatmap_plot(
 \item{title}{The title of the plot}
 
 \item{legend_title}{The title of the legend}
+
+\item{cluster_cols}{Whether to cluster columns or not}
 }
 \value{
 A ComplexHeatmap
