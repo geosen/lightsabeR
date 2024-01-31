@@ -24,14 +24,14 @@ ensg_to_hgnc(
 A dataframe with deduplicated HGNC IDs as rownames
 }
 \description{
-This function takes a table with Ensembl Gene IDs, converts them to HGNC symbols, 
+This function takes a table with Ensembl Gene IDs, converts them to HGNC symbols,
 leaves out all non-converted IDs (Blanks) and deduplicates
 }
 \details{
-Deduplication is performed based on higher expression and if that is a tie then 
+Deduplication is performed based on higher expression and if that is a tie then
 it chooses higher variation.
-If only 1 gene has a mean expression over 1, removes all others. 
-If 2 or more genes have expression over 1, or 2 or all genes have expression 
+If only 1 gene has a mean expression over 1, removes all others.
+If 2 or more genes have expression over 1, or 2 or all genes have expression
 lower than 1, then keeps the one with the highest variance.
 
 Dependencies are:

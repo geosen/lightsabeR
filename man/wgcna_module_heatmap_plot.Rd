@@ -19,7 +19,13 @@ wgcna_module_heatmap_plot(
   title = "WGCNA Module - Trait Correlation",
   legend_title = "Correlation",
   cluster_rows = FALSE,
-  cluster_cols = FALSE
+  cluster_cols = FALSE,
+  border_color = "black",
+  border_linetype = 1,
+  border_linewidth = 1,
+  cell_color = "white",
+  cell_linetype = 1,
+  cell_linewidth = 1
 )
 }
 \arguments{
@@ -49,7 +55,21 @@ wgcna_module_heatmap_plot(
 
 \item{legend_title}{The title of the legend}
 
+\item{cluster_rows}{Whether to cluster rows or not}
+
 \item{cluster_cols}{Whether to cluster columns or not}
+
+\item{border_color}{Outer rectangle line color}
+
+\item{border_linetype}{Outer rectangle linetype}
+
+\item{border_linewidth}{Outer rectangle linewidth}
+
+\item{cell_color}{Inner rectangle line color}
+
+\item{cell_linetype}{Inner rectangle linetype}
+
+\item{cell_linewidth}{Inner rectangle linewidth}
 }
 \value{
 A ComplexHeatmap
@@ -58,6 +78,7 @@ A ComplexHeatmap
 Dependencies are:
 library(ComplexHeatmap)
 library(circlize)
+library(stringr)
 }
 \details{
 date 11/07/2023

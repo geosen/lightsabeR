@@ -3,6 +3,7 @@
 #'Dependencies are:
 #' library(ComplexHeatmap)
 #' library(circlize)
+#' library(stringr)
 #'
 #'date 11/07/2023
 #'@param wgcna_trait_res Input wgcna results data.frame 
@@ -19,8 +20,13 @@
 #'@param title The title of the plot
 #'@param legend_title The title of the legend
 #'@param cluster_cols Whether to cluster columns or not
-#'
-#'
+#'@param cluster_rows Whether to cluster rows or not
+#'@param border_color Outer rectangle line color
+#'@param border_linetype Outer rectangle linetype
+#'@param border_linewidth Outer rectangle linewidth
+#'@param cell_color Inner rectangle line color
+#'@param cell_linetype Inner rectangle linetype
+#'@param cell_linewidth Inner rectangle linewidth
 #'
 #'
 #'@return A ComplexHeatmap
@@ -40,7 +46,13 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
                                       title = 'WGCNA Module - Trait Correlation',
                                       legend_title = 'Correlation',
                                       cluster_rows = FALSE,
-                                      cluster_cols = FALSE)
+                                      cluster_cols = FALSE,
+                                      border_color = 'black',
+                                      border_linetype = 1,
+                                      border_linewidth = 1,
+                                      cell_color = 'white',
+                                      cell_linetype = 1,
+                                      cell_linewidth = 1)
 
 {
     #filtering out P-value columns and converting to a matrix
@@ -66,7 +78,7 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
   #plotting the heatmap
   
   if(!is.null(colf)) {
-    Heatmap(wgcna_mat,
+    ComplexHeatmap::Heatmap(wgcna_mat,
             col = colf, 
             row_labels = row_labels, 
             column_labels = col_labels,
@@ -77,6 +89,12 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
             cluster_rows = cluster_rows,
             cluster_columns = cluster_cols,
             row_km = row_km,
+            border_gp = gpar(col = border_color, 
+                             lty = border_linetype,
+                             lwd = border_linewidth),
+            rect_gp = gpar(col = cell_color,
+                           lty = cell_linetype,
+                           lwd = cell_linewidth),
             show_row_dend = show_row_dend, 
             show_column_dend = show_column_dend, 
             column_title = gt_render(paste0("<span style='color:black'>**",title,"**</span>"),
@@ -92,7 +110,7 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
     )
     
   } else if (is.null(colf)) {
-    Heatmap(wgcna_mat,
+    ComplexHeatmap::Heatmap(wgcna_mat,
             #col = colf, 
             row_labels = row_labels, 
             column_labels = col_labels,
@@ -103,6 +121,12 @@ wgcna_module_heatmap_plot <- function(wgcna_trait_res,
             cluster_rows = cluster_rows,
             cluster_columns = cluster_cols,
             row_km = row_km,
+            border_gp = gpar(col = border_color, 
+                             lty = border_linetype,
+                             lwd = border_linewidth),
+            rect_gp = gpar(col = cell_color,
+                           lty = cell_linetype,
+                           lwd = cell_linewidth),
             show_row_dend = show_row_dend, 
             show_column_dend = show_column_dend, 
             column_title = gt_render(paste0("<span style='color:black'>**",title,"**</span>"),

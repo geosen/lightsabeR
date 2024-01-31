@@ -64,6 +64,5 @@ Dependencies are:
 library(ggplot2)
 library(FactoMineR)
 
-
 date 07/11/2022
 }

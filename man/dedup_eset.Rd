@@ -15,14 +15,14 @@ dedup_eset(eset, fData_gene_symbol_column_name = "Gene Symbol")
 An ExpressionSet object with 1 probe per gene
 }
 \description{
-This function takes an Expression Set object, finds probes that correspond to the same gene 
+This function takes an Expression Set object, finds probes that correspond to the same gene
 according to fData, and deduplicates.
 }
 \details{
-Deduplication is performed based on higher expression and if that is a tie then 
+Deduplication is performed based on higher expression and if that is a tie then
 it chooses higher variation.
-If only 1 probe has a mean expression over 1, removes all others. 
-If 2 or more probes have expression over 1, or 2 or all probes have expression 
+If only 1 probe has a mean expression over 1, removes all others.
+If 2 or more probes have expression over 1, or 2 or all probes have expression
 lower than 1, then it keeps the one with the highest variance.
 
 Dependencies are:

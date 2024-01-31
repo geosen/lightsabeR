@@ -16,13 +16,7 @@
 #'@export
 
 shinyHeatmap_sen <- function(){
-library(ComplexHeatmap)
-library(circlize)
-library(dplyr)
-library(openxlsx)
-library(edgeR)
-library(stringr)
-library(shiny)
+
 
   options(shiny.maxRequestSize = 200*1024^2)
 ui <- fluidPage(

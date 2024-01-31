@@ -75,6 +75,5 @@ library(ggplot2)
 library(dplyr)
 library(ggrepel)
 
-
 date 24/10/2022
 }

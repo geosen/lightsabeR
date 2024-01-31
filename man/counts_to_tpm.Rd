@@ -23,7 +23,7 @@ counts_to_tpm(
 A dataframe with TPM expression values
 }
 \description{
-This function takes a table with Ensembl Gene IDs or HGNC symbolsn and converts the raw expression values to HGNC symbols TPM 
+This function takes a table with Ensembl Gene IDs or HGNC symbolsn and converts the raw expression values to HGNC symbols TPM
 This function does not take into account effective gene length. Maybe you want to look more into this for scientific and publication purposes.
 Dependencies are:
 library(biomaRt)

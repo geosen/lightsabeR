@@ -1,6 +1,27 @@
 Package: lightsabeR
-Type: Package
-Title: Light Support (for) A Bioinformatics Enthusiast
-Version: 0.1.0
-Imports: biomaRt, dplyr, ggplot2, FactoMineR
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person("George", "Sentis", , "sentigeo@yahoo.gr", role = c("aut", "cre"))
+Description: Light Support for A Bioinformatics Enthusiast in R
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.0
+Imports: 
+    Biobase,
+    biomaRt,
+    circlize,
+    ComplexHeatmap,
+    dplyr,
+    DT,
+    edgeR,
+    FactoMineR,
+    ggplot2,
+    ggrepel,
+    gprofiler2,
+    gridtext,
+    openxlsx,
+    plotly,
+    shiny,
+    stringr
