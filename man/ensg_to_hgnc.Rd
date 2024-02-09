@@ -8,7 +8,7 @@ ensg_to_hgnc(
   table,
   ensembl_version = 0,
   organism = "hsapiens",
-  version = FALSE
+  discard_na = TRUE
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ ensg_to_hgnc(
 
 \item{organism}{The organism to search for: hsapiens or mmusculus}
 
-\item{version}{TRUE/FALSE. Whether the identifiers of the original dataframe have an ensembl gene id version number}
+\item{discard_na}{Whether to discard genes with no HGNC symbol corresponding to their ENSG ID. Setting this to false returns ENSG IDs for genes with no HGNC symbol and the HGNC symbol for the rest.}
 }
 \value{
 A dataframe with deduplicated HGNC IDs as rownames
