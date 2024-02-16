@@ -24,6 +24,7 @@ Imports:
     gprofiler2,
     gridtext,
     igraph,
+    msigdbr,
     openxlsx,
     plotly,
     shiny,

@@ -64,6 +64,7 @@ Dependencies are:
 library(clusterProfiler)
 library(openxlsx)
 library(dplyr)
+library(stringr)
 library(msigdbr)
 
 date 02/08/2023

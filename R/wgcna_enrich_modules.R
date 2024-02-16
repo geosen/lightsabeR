@@ -6,6 +6,7 @@
 #' library(clusterProfiler)
 #' library(openxlsx)
 #' library(dplyr)
+#' library(stringr)
 #' library(msigdbr)
 #'
 #'date 02/08/2023
@@ -52,6 +53,19 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
   
   if(!requireNamespace("clusterProfiler")) {
     stop('Please load clusterProfiler to continue')
+  }
+  
+  if(export_to_xlsx & !requireNamespace("openxlsx")) {
+    stop('Please load openxlsx to continue')
+  }
+  if(!requireNamespace("dplyr")) {
+    stop('Please load dplyr to continue')
+  }
+  if(!requireNamespace("stringr")) {
+    stop('Please load stringr to continue')
+  }
+  if(!requireNamespace("msigdbr")) {
+    stop('Please load msigdbr to continue')
   }
   
   if(significant_only == TRUE & is.null(modules)) {
