@@ -12,6 +12,7 @@ Imports:
     Biobase,
     biomaRt,
     circlize,
+    clusterProfiler,
     ComplexHeatmap,
     dplyr,
     DT,

@@ -2,25 +2,32 @@
 % Please edit documentation in R/wgcna_enrich_modules.R
 \name{wgcna_enrich_modules}
 \alias{wgcna_enrich_modules}
-\title{Perform enrichment analysis on WGCNA gene lists using the latest version of gprofiler2}
+\title{Perform enrichment analysis on WGCNA gene lists using the latest version of clusterProfiler}
 \usage{
 wgcna_enrich_modules(
   wgcna_gene_info,
-  gene_id_cols = "EnsemblGeneID",
+  gene_id_cols = "geneSymbol",
   module_color_column = "moduleColor",
-  organism = "hsapiens",
+  organism = "Homo sapiens",
   modules = NULL,
   module_Results = NULL,
   significant_only = TRUE,
-  export_to_xlsx = FALSE
+  export_to_xlsx = FALSE,
+  collections = c("H", "C2;CP", "C5;GO:BP"),
+  pvalueCutoff = 0.05,
+  export_fdr_thres = 0.05,
+  pAdjustMethod = "BH",
+  minGSSize = 10,
+  maxGSSize = 500,
+  qvalueCutoff = 1
 )
 }
 \arguments{
 \item{wgcna_gene_info}{Table containing gene names and the module they belong}
 
-\item{gene_id_cols}{The name of the column containing gene ids}
+\item{gene_id_cols}{The name of the column containing gene ids (HGNC_Symbols)}
 
-\item{organism}{The organism to search for: hsapiens or mmusculus}
+\item{organism}{The organism to search for: Homo sapiens or Mus musculus}
 
 \item{modules}{A vector containing the modules to be tested. If this is given, any other module parameter is overriden.}
 
@@ -29,17 +36,35 @@ wgcna_enrich_modules(
 \item{significant_only}{TRUE/FALSE. Whether to check only modules that are significantly correlated with at least 1 phenotypical trait or check every module detected.}
 
 \item{export_to_xlsx}{TRUE/FALSE. Whether to export results for each module to an excel file.}
+
+\item{pvalueCutoff}{ClusterProfiler's adjusted pvalue cutoff on enrichment tests to report}
+
+\item{export_fdr_thres}{Used when export to xlsx is TRUE to filter the final list of geneset results to be exported. By default, it equals the pvalueCutoff.}
+
+\item{pAdjustMethod}{ClusterProfiler's: one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"}
+
+\item{minGSSize}{ClusterProfiler's minimal size of genes annotated for testing}
+
+\item{maxGSSize}{ClusterProfiler's maximal size of genes annotated for testing}
+
+\item{qvalueCutoff}{qvalue cutoff on enrichment tests to report as significant. Tests must pass i) pvalueCutoff on unadjusted pvalues, ii) pvalueCutoff on adjusted pvalues and iii) qvalueCutoff on qvalues to be reported.}
+
+\item{genesets}{The collections of MSigDB R package to check enrichment of in the format of Category;Subcategory.}
+
+\item{fdr_threshold}{The FDR threshold for results exported in Excel file}
 }
 \value{
 A list with enrichment results as elements.
 }
 \description{
-Perform enrichment analysis on WGCNA gene lists using the latest version of gprofiler2
+Perform enrichment analysis on WGCNA gene lists using the latest version of clusterProfiler
 }
 \details{
 Dependencies are:
-library(gprofiler2)
+library(clusterProfiler)
 library(openxlsx)
+library(dplyr)
+library(msigdbr)
 
 date 02/08/2023
 }
