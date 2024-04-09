@@ -119,7 +119,7 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
   }
   
   ##creating background
-  background <- geneInfo %>%
+  background <- wgcna_gene_info %>%
     filter(!duplicated(geneSymbol),!is.na(geneSymbol), geneSymbol != '') %>%
     pull(geneSymbol)
     
@@ -138,7 +138,7 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
     #selecting module
     module <- modules[i]
     #isolating gene list
-    genes <- geneInfo %>%
+    genes <- wgcna_gene_info %>%
       filter(get(module_color_column) == module) %>%
       mutate(geneSymb = lightsabeR::remove_version(get(gene_id_cols))) %>%
       dplyr::select(geneSymb, paste0('MM.',module), paste0('p.MM.',module))
