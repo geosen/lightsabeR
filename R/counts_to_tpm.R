@@ -1,13 +1,15 @@
-#'Convert ENSG_ID rownames of a table to HGNC_ID IDs
+#'Convert raw counts to tpm counts
 #'
-#'This function takes a table with Ensembl Gene IDs or HGNC symbolsn and converts the raw expression values to HGNC symbols TPM 
-#'This function does not take into account effective gene length. Maybe you want to look more into this for scientific and publication purposes.
+#'This function takes a table with raw expression counts and converts them to TPM 
+#'This function does not take into account effective gene length.
 #'Dependencies are:
 #' library(biomaRt)
 #'
 #'date 30/04/2023
-#'@param df Input data frame with ENSG IDs or HGNC symbols as rownames
+#'@param df Input data frame with raw counts and gene ids as rownames
+#'@param identifier_type One of hgnc_symbol, ensembl_gene_id  of mgi_symbol
 #'@param ensembl_version The version of ensembl to be used. If none is provided the function uses the default (latest) version
+#'@param gene_lengths A vector of the same length as the rows of the df containing the length of each gene
 #'@param organism The organism to search for: human or mouse
 #'
 #'@return A dataframe with TPM expression values

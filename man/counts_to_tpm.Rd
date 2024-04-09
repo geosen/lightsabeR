@@ -2,7 +2,7 @@
 % Please edit documentation in R/counts_to_tpm.R
 \name{counts_to_tpm}
 \alias{counts_to_tpm}
-\title{Convert ENSG_ID rownames of a table to HGNC_ID IDs}
+\title{Convert raw counts to tpm counts}
 \usage{
 counts_to_tpm(
   df,
@@ -13,9 +13,13 @@ counts_to_tpm(
 )
 }
 \arguments{
-\item{df}{Input data frame with ENSG IDs or HGNC symbols as rownames}
+\item{df}{Input data frame with raw counts and gene ids as rownames}
+
+\item{identifier_type}{One of hgnc_symbol, ensembl_gene_id  of mgi_symbol}
 
 \item{ensembl_version}{The version of ensembl to be used. If none is provided the function uses the default (latest) version}
+
+\item{gene_lengths}{A vector of the same length as the rows of the df containing the length of each gene}
 
 \item{organism}{The organism to search for: human or mouse}
 }
@@ -23,8 +27,8 @@ counts_to_tpm(
 A dataframe with TPM expression values
 }
 \description{
-This function takes a table with Ensembl Gene IDs or HGNC symbolsn and converts the raw expression values to HGNC symbols TPM
-This function does not take into account effective gene length. Maybe you want to look more into this for scientific and publication purposes.
+This function takes a table with raw expression counts and converts them to TPM
+This function does not take into account effective gene length.
 Dependencies are:
 library(biomaRt)
 }

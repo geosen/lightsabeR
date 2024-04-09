@@ -3,6 +3,7 @@
 export(ENSG_manipulator_shiny)
 export(combine_htseq_files)
 export(counts_to_tpm)
+export(counts_to_tpm_94)
 export(create_rnk)
 export(dedup_eset)
 export(ensg_to_hgnc)

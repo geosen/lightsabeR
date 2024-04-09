@@ -55,7 +55,7 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
     stop('Please load clusterProfiler to continue')
   }
   
-  if(export_to_xlsx & !requireNamespace("openxlsx")) {
+  if(!requireNamespace("openxlsx")) {
     stop('Please load openxlsx to continue')
   }
   if(!requireNamespace("dplyr")) {
