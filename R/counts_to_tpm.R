@@ -32,7 +32,7 @@ counts_to_tpm <- function(df,
     
     if(is.null(ensembl_version)) {
       mart = useEnsembl(biomart = 'ensembl',dataset = 'hsapiens_gene_ensembl')
-      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id','hgnc_symbol','entrezgene','start_position','end_position','description'))
+      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id','hgnc_symbol','start_position','end_position','description'))
       gene_list$gene_length = abs(gene_list$start_position-gene_list$end_position)
       
       if(identifier_type == 'hgnc_symbol'){
@@ -43,7 +43,7 @@ counts_to_tpm <- function(df,
       
     } else {
       mart = useEnsembl(biomart = 'ensembl',dataset = 'hsapiens_gene_ensembl', version = ensembl_version)
-      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id_version','ensembl_gene_id','hgnc_symbol','entrezgene','start_position','end_position','description'))
+      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id_version','ensembl_gene_id','hgnc_symbol','start_position','end_position','description'))
       gene_list$gene_length = abs(gene_list$start_position-gene_list$end_position)
      
       if(identifier_type == 'hgnc_symbol'){
@@ -58,7 +58,7 @@ counts_to_tpm <- function(df,
   if(organism == 'mouse'){
     if(is.null(ensembl_version)) {
       mart = useEnsembl(biomart = 'ensembl',dataset = 'mmusculus_gene_ensembl')
-      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id','mgi_symbol','entrezgene','start_position','end_position','description'))
+      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id','mgi_symbol','start_position','end_position','description'))
       gene_list$gene_length = abs(gene_list$start_position-gene_list$end_position)
       
       if(identifier_type == 'mgi_symbol'){
@@ -69,7 +69,7 @@ counts_to_tpm <- function(df,
       
     } else {
       mart = useEnsembl(biomart = 'ensembl',dataset = 'mmusculus_gene_ensembl', version = ensembl_version)
-      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id_version','mgi_symbol','entrezgene','start_position','end_position','description'))
+      gene_list <- getBM(mart = mart, attributes=c('ensembl_gene_id_version','mgi_symbol','start_position','end_position','description'))
       gene_list$gene_length = abs(gene_list$start_position-gene_list$end_position)
       
       if(identifier_type == 'mgi_symbol'){

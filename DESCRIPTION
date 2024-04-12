@@ -7,7 +7,7 @@ Description: Light Support for A Bioinformatics Enthusiast in R
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 Imports: 
     Biobase,
     biomaRt,
