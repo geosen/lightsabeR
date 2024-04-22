@@ -17,9 +17,9 @@
 
 get_gene_vms <- function(df,genes) {
   
-  geneinfo <- data.frame( vars = unlist(sapply(as.data.frame(t(expr1[genes,])),var)),
-                          means = unlist(sapply(as.data.frame(t(expr1[genes,])),mean)),
-                          sums = unlist(sapply(as.data.frame(t(expr1[genes,])),sum)))
+  geneinfo <- data.frame( vars = unlist(sapply(as.data.frame(t(df[genes,])),var)),
+                          means = unlist(sapply(as.data.frame(t(df[genes,])),mean)),
+                          sums = unlist(sapply(as.data.frame(t(df[genes,])),sum)))
   
 }
 
