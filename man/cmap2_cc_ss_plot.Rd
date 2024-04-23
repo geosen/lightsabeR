@@ -12,7 +12,9 @@ cmap2_cc_ss_plot(
   max.overlaps = 40,
   min.segment.length = unit(0.001, "mm"),
   label_alpha = 0.8,
-  label_size = 3
+  label_size = 3,
+  tas_color = "blue",
+  tas_linetype = "dashed"
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ cmap2_cc_ss_plot(
 \item{label_alpha}{Transparency parameter for labels}
 
 \item{label_size}{Size parameter for labels}
+
+\item{tas_color}{Color of the tas lines}
+
+\item{tas_linetype}{Linetype of the tas lines}
 }
 \value{
 A ggplot
