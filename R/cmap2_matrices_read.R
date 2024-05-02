@@ -79,6 +79,11 @@ cmap2_matrices_read <- function(clue_results_dir, keep_only_morpheus = FALSE) {
            tas = as.numeric(tas),
            qc_pass = as.integer(qc_pass))
   
+  #replacing -666 with NAs
+    #from connectopedia: Note that any missing metadata value is represented by -666, 
+    #which indicates that the information is not available or not applicable.
+  melt_complete[melt_complete=='-666'] <- NA
+  
   if(keep_only_morpheus) {
     #keeping only CLUE MORPHEUS (ARFS) rows with is_exemplar_sig
     melt_final <- melt_complete %>%

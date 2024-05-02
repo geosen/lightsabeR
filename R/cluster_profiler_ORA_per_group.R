@@ -9,13 +9,12 @@
 #' library(stringr)
 #' library(msigdbr)
 #'
-#'date 02/08/2023
-#'@param wgcna_gene_info Table containing gene names and the module they belong
+#'date 02/05/2024
+#'@param df Table containing gene names and the group they belong
 #'@param gene_id_cols The name of the column containing gene ids (HGNC_Symbols)
+#'@param group_column The name of the column defining the gene groups
 #'@param organism The organism to search for: Homo sapiens or Mus musculus
-#'@param modules A vector containing the modules to be tested. If this is given, any other module parameter is overriden. 
-#'@param module_Results A data frame with module names as rownames containing columns with correlation p.values between module eigengenes and phenotypical traits.
-#'@param significant_only TRUE/FALSE. Whether to check only modules that are significantly correlated with at least 1 phenotypical trait or check every module detected.
+#'@param groups A vector containing the modules to be tested. If this is given, any other module parameter is overriden. 
 #'@param export_to_xlsx TRUE/FALSE. Whether to export results for each module to an excel file.
 #'@param genesets The collections of MSigDB R package to check enrichment of in the format of Category;Subcategory.
 #'@param fdr_threshold The FDR threshold for results exported in Excel file
@@ -35,13 +34,11 @@
 #'
 #'
 
-wgcna_enrich_modules <- function(wgcna_gene_info,
-                                 gene_id_cols = 'geneSymbol',
-                                 module_color_column = 'moduleColor',
+cluster_profiler_ORA_per_group <- function(df,
+                                 gene_id_cols = 'hgnc_symbol',
+                                 group_column = 'gene_groups',
                                  organism = 'Homo sapiens',
-                                 modules = NULL,
-                                 module_Results = NULL,
-                                 significant_only = TRUE,
+                                 groups = NULL,
                                  export_to_xlsx = FALSE,
                                  collections = c('H','C2;CP','C5;GO:BP'),
                                  pvalueCutoff = 0.05,
@@ -68,25 +65,11 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
     stop('Please load msigdbr to continue')
   }
   
-  if(significant_only == TRUE & is.null(modules)) {
-    stopifnot('To check for significance you have to provide module_Results data frame' =  !is.null(module_Results))
-    
-    #check for modules significant in at least 1 characteristic
-    mods_sig <- module_Results[grepl('^p\\.',colnames(module_Results))] < 0.05
-    #isolate names
-    mods <- rownames(mods_sig)[rowSums(mods_sig)>0]
-    #fix names
-    modules <- gsub('^ME','',mods)
-      
-  } else if(significant_only == FALSE & is.null(modules)) {
-    stopifnot('To check all modules you have to provide module_Results data frame' =  !is.null(module_Results))
-    #Check all names
-    modules = gsub('^ME','', rownames(module_Results))
-    }
+
   
-  if(!is.null(modules)) {
-    cat('Proceeding with selected modules:\n')
-    cat(paste0(modules))
+  if(!is.null(groups)) {
+    cat('Proceeding with selected groups:\n')
+    cat(paste0(groups))
   }
   
   
@@ -119,10 +102,10 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
   }
   
   ##creating background
-  background <- wgcna_gene_info %>%
-    filter(!duplicated(geneSymbol),!is.na(geneSymbol), geneSymbol != '') %>%
-    pull(geneSymbol)
-    
+  background <- df %>%
+    filter(!duplicated(get(gene_id_cols)),!is.na(get(gene_id_cols)), get(gene_id_cols) != '') %>%
+    pull(get(gene_id_cols))
+  
   
   ##Creating Term2Gene
   t2g_cp <- genesets %>%
@@ -130,33 +113,33 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
                     gene_symbol) %>%
     as.data.frame()
   
-    #creating list for storing results
-    cp_res <- list()
+  #creating list for storing results
+  cp_res <- list()
   
-    ##enrichment check loop
-  for (i in 1:length(modules)) {
-    #selecting module
-    module <- modules[i]
-    #isolating gene list
-    genes <- wgcna_gene_info %>%
-      filter(get(module_color_column) == module) %>%
-      mutate(geneSymb = lightsabeR::remove_version(get(gene_id_cols))) %>%
-      dplyr::select(geneSymb, paste0('MM.',module), paste0('p.MM.',module))
+  ##enrichment check loop
+  for (i in 1:length(groups)) {
     
+    #selecting group
+    group <- groups[i]
+    #isolating gene list
+    genes <- df %>%
+      filter(get(group_column) == group) %>%
+      mutate(geneSymb = lightsabeR::remove_version(get(gene_id_cols))) %>%
+      dplyr::select(geneSymb)
     
     if(length(intersect(genes$geneSymb,t2g_cp$gene_symbol)) != 0){
       
-      #running enrichment
-      cpMod <- enricher(genes$geneSymb,
-                        pvalueCutoff = pvalueCutoff,
-                        pAdjustMethod = pAdjustMethod,
-                        universe = background,
-                        minGSSize = minGSSize,
-                        maxGSSize = maxGSSize,
-                        qvalueCutoff = qvalueCutoff,
-                        TERM2GENE = t2g_cp)
+    #running enrichment
+    cpMod <- enricher(genes$geneSymb,
+                      pvalueCutoff = pvalueCutoff,
+                      pAdjustMethod = pAdjustMethod,
+                      universe = background,
+                      minGSSize = minGSSize,
+                      maxGSSize = maxGSSize,
+                      qvalueCutoff = qvalueCutoff,
+                      TERM2GENE = t2g_cp)
     
-    cp_res[[module]] <- cpMod
+    cp_res[[group]] <- cpMod
     
     if(export_to_xlsx) {
       
@@ -164,17 +147,16 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
         stop('Please load openxlsx to export to excel file')
       }
       
-      addWorksheet(wb = wb, sheetName = module)
+      addWorksheet(wb = wb, sheetName = group)
       
-      writeDataTable(wb = wb, sheet = module, x = cpMod@result %>%
+      writeDataTable(wb = wb, sheet = group, x = cpMod@result %>%
                        filter(p.adjust < export_fdr_thres))
-                 
+      
     }
     } else {
-      warning(paste0('No genes mapped to pathways for module: ', module,'.\nDo not expect an entry for this module in the relevant object and/or xlsx file.'))
+      warning(paste0('No genes mapped to pathways for group: ', group,'.\nDo not expect an entry for this group in the relevant object and/or xlsx file.'))
     }
-    
-    }
+  }
   
   
   if(export_to_xlsx){
@@ -183,7 +165,7 @@ wgcna_enrich_modules <- function(wgcna_gene_info,
                         gsub('\\.[[:digit:]]+','',
                              as.numeric(Sys.time())),
                         '.xlsx')
-                 )
+    )
     
   }
   cp_res
