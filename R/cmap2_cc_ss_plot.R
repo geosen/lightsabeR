@@ -43,14 +43,14 @@ cmap2_cc_ss_plot <- function(cmap_melted, n_top_highlight = NULL, cell_types = N
 #tas_function <- function(x,y) {sqrt(x*y/978)}
 
 #annotating signatures
-df <- df %>% 
+df1 <- df1 %>% 
   mutate(Signature = case_when(cc_q75 >= 0.2 & ss_ngene <200 ~ 'Subtle & reproducible',
                                       cc_q75 >= 0.2 & ss_ngene >=200 ~ 'Strong & reproducible',
                                       cc_q75 < 0.2 & ss_ngene <200 ~ 'Inert',
                                       cc_q75 < 0.2 & ss_ngene >=200 ~ 'Noisy')) 
 
 if(!is.null(cell_types)) {
-df2 <- df %>%
+df2 <- df1 %>%
   filter(cell_iname %in% cell_types)
 } else {
   df2 <- df
