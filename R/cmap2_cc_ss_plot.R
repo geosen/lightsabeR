@@ -17,6 +17,7 @@
 #'@param label_size Size parameter for labels
 #'@param tas_color Color of the tas lines
 #'@param tas_linetype Linetype of the tas lines
+#'@param slice_tas_n If not null, keeps the top n entries based on TAS
 #'
 #'
 #'
@@ -29,7 +30,8 @@ cmap2_cc_ss_plot <- function(cmap_melted, n_top_highlight = NULL, cell_types = N
                              label_alpha = 0.8,
                              label_size = 3,
                              tas_color = 'blue',
-                             tas_linetype = 'dashed') {
+                             tas_linetype = 'dashed',
+                             slice_tas_n =NULL) {
   
   if(!requireNamespace("cmapR")) {
     stop('Please load cmapR to continue')
@@ -43,17 +45,26 @@ cmap2_cc_ss_plot <- function(cmap_melted, n_top_highlight = NULL, cell_types = N
 #tas_function <- function(x,y) {sqrt(x*y/978)}
 
 #annotating signatures
-df1 <- df1 %>% 
+cmap_melted <- cmap_melted %>% 
+  dplyr::filter(cc_q75>=0) %>% #Negative CC_Q75 are signatures that are not reproducible but 
+  #contradictory between replicates, therefore they are of no interest to us and will only get 
+  #in the way of plotting the TAS axis, as TAS is not defined for negative cc_q75 values. The 
+  #exact equation of TAS for negative values is unclear to me at the moment.
   mutate(Signature = case_when(cc_q75 >= 0.2 & ss_ngene <200 ~ 'Subtle & reproducible',
                                       cc_q75 >= 0.2 & ss_ngene >=200 ~ 'Strong & reproducible',
                                       cc_q75 < 0.2 & ss_ngene <200 ~ 'Inert',
                                       cc_q75 < 0.2 & ss_ngene >=200 ~ 'Noisy')) 
 
+
+if(!is.null(slice_tas_n)) {
+  cmap_melted <- cmap_melted %>% slice_max(tas, n = slice_tas_n)
+}
+
 if(!is.null(cell_types)) {
 df2 <- df1 %>%
   filter(cell_iname %in% cell_types)
 } else {
-  df2 <- df
+  df2 <- cmap_melted
 }
 
 if(!is.null(n_top_highlight) & is.null(ids_to_highlight)) {
@@ -92,7 +103,7 @@ g <- ggplot(df2, aes(x = cc_q75,y = ss_ngene, color = Signature)) +
   scale_color_manual(values = c('thistle3','cadetblue3','goldenrod3','darkolivegreen3')) + 
   scale_y_continuous(
     limits = c(0, 1000), 
-    sec.axis = sec_axis(~ sqrt(. / 978), "TAS", 
+    sec.axis = sec_axis(~ sqrt(. / 978), "TAS",
                         breaks = seq(0.2, 0.8, 0.2))) + 
   theme_minimal()
 

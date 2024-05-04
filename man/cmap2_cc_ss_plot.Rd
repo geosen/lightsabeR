@@ -14,7 +14,8 @@ cmap2_cc_ss_plot(
   label_alpha = 0.8,
   label_size = 3,
   tas_color = "blue",
-  tas_linetype = "dashed"
+  tas_linetype = "dashed",
+  slice_tas_n = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ cmap2_cc_ss_plot(
 \item{tas_color}{Color of the tas lines}
 
 \item{tas_linetype}{Linetype of the tas lines}
+
+\item{slice_tas_n}{If not null, keeps the top n entries based on TAS}
 }
 \value{
 A ggplot
