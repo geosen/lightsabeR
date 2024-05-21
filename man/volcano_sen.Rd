@@ -5,7 +5,7 @@
 \title{Create a volcano plot}
 \usage{
 volcano_sen(
-  table,
+  de_table,
   title = "Cond_Up vs Cond_Down",
   significanceMeasure = c("fdr", "PValue"),
   thresSig = 0.05,
@@ -26,7 +26,7 @@ volcano_sen(
 )
 }
 \arguments{
-\item{table}{Input table with logFC and (fdr or PValue) columns}
+\item{de_table}{Input table with logFC and (fdr or PValue) columns}
 
 \item{title}{Title of the plot}
 

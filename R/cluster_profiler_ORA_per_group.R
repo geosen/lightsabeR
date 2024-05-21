@@ -70,6 +70,8 @@ cluster_profiler_ORA_per_group <- function(df,
   if(!is.null(groups)) {
     cat('Proceeding with selected groups:\n')
     cat(paste0(groups))
+  } else {
+      groups = levels(as.factor(df[,group_column]))
   }
   
   

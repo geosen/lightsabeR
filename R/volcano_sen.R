@@ -10,7 +10,7 @@
 #'
 #'
 #'date 24/10/2022
-#'@param table Input table with logFC and (fdr or PValue) columns
+#'@param de_table Input table with logFC and (fdr or PValue) columns
 #'@param title Title of the plot
 #'@param significanceMeasure the significance Measure to be used for statistical significance. Must match the corresponding column' name
 #'@param thresSig The statistical Measure significance value
@@ -33,11 +33,14 @@
 #'@export
 
 
-volcano_sen <- function(table, title = "Cond_Up vs Cond_Down", significanceMeasure = c("fdr","PValue"), thresSig = 0.05, thresLogFC = 0.58, 
+volcano_sen <- function(de_table, title = "Cond_Up vs Cond_Down", significanceMeasure = c("fdr","PValue"), 
+                        thresSig = 0.05, thresLogFC = 0.58, 
                         colorUp="darkgreen",colorDown = "steelblue", colorNeutral = "lightgrey" , 
-                        xlim = c(-10,10), ylim = c(0,15), breaks_x_default = FALSE, breaks_y_default = FALSE,
-                        genes_to_label = NULL, label_columns_names = NULL, ids=c("single","mixed"),
-                        label_size = 4, label_alpha = 0.7, max_overlaps = 40)
+                        xlim = c(-10,10), ylim = c(0,15), 
+                        breaks_x_default = FALSE, breaks_y_default = FALSE,
+                        genes_to_label = NULL, label_columns_names = NULL, 
+                        ids=c("single","mixed"), label_size = 4, 
+                        label_alpha = 0.7, max_overlaps = 40)
   
   {
   
@@ -65,28 +68,14 @@ volcano_sen <- function(table, title = "Cond_Up vs Cond_Down", significanceMeasu
     significanceMeasure <- 'fdr'
   }
   ##Volcano code
-  upregulated <- table %>%
-    filter(get(significanceMeasure) < thresSig, logFC > thresLogFC) %>%
-    mutate(
-      change = 'Upregulated'
-    )
+  de_table <- de_table %>%
+    dplyr::mutate(change = case_when(get(significanceMeasure) < 0.05 & logFC > 0.58 ~ "Upregulated",
+                                     get(significanceMeasure) < 0.05 & logFC < -0.58 ~ "Downregulated",
+                                     get(significanceMeasure) > 0.05 | abs(logFC) <= 0.58 ~ "Insignificant"))
   
-  downregulated <- table %>%
-    filter(get(significanceMeasure) < thresSig, logFC < -thresLogFC) %>%
-    mutate(
-      change = 'Downregulated'
-    )
-  
-  insignificant <- table %>%
-    filter(get(significanceMeasure) > thresSig | get(significanceMeasure) < thresSig & logFC <= thresLogFC & logFC >= -thresLogFC ) %>%
-    mutate(
-      change = 'Insignificant'
-    )
-  
-  table <- rbind(upregulated,downregulated,insignificant)
   
   ##creating base plot
-g <-ggplot(table, aes(logFC, -log10(get(significanceMeasure)),color = as.factor(change))) + 
+g <-ggplot(de_table, aes(logFC, -log10(get(significanceMeasure)),color = as.factor(change))) + 
     geom_point() +
     geom_hline(yintercept= -log10(thresSig))+
     geom_vline(xintercept = -thresLogFC)+
@@ -112,18 +101,21 @@ if (!breaks_y_default) {
 
 ##adding genes with labels
 if (!is.null(genes_to_label)) {
+
+  #check non-empty gene names
+  genes_to_label <- genes_to_label[!is.na(genes_to_label) & genes_to_label != '']
   
   if(length(ids) >1) {
     ids <- "single"
   }
   
   if(is.null(label_columns_names)){
-    if(sum(genes_to_label %in% rownames(table))==0){
+    if(sum(genes_to_label %in% rownames(de_table))==0){
       stop("Genes not found in rownames. Please provide the column name of the label column.")
     } else {
     g <- g + geom_label_repel(
-      data = table[rownames(table) %in% genes_to_label,],
-      aes(label= rownames(table[rownames(table) %in% genes_to_label,]),color = as.factor(change)),
+      data = de_table[rownames(de_table) %in% genes_to_label,],
+      aes(label= rownames(de_table[rownames(de_table) %in% genes_to_label,]),color = as.factor(change)),
       min.segment.length = unit(0.01,"cm"),
       size = label_size,
       alpha = label_alpha,
@@ -131,7 +123,7 @@ if (!is.null(genes_to_label)) {
       )
     }
     
-  }  else if (!is.null(label_columns_names) & !(label_columns_names %in% colnames(table))) {
+  }  else if (!is.null(label_columns_names) & !(label_columns_names %in% colnames(de_table))) {
     stop("Please provide valid column names")
     
   } else {
@@ -143,18 +135,18 @@ if (!is.null(genes_to_label)) {
       stop("Please choose two columns for IDs")
     } else {
       
-      if(sum(is.null(table[,label_columns_names[1]]))< sum(is.null(table[,label_columns_names[2]]))){
+      if(sum(is.null(de_table[,label_columns_names[1]]))< sum(is.null(de_table[,label_columns_names[2]]))){
         
-      table$mixed <- table[,label_columns_names[2]]
-      table$mixed(is.null(table$mixed)) <- table[is.null(table$mixed),label_columns_names[1]]
+      de_table$mixed <- de_table[,label_columns_names[2]]
+      de_table$mixed(is.null(de_table$mixed)) <- de_table[is.null(de_table$mixed),label_columns_names[1]]
 
       } else {
-        table$mixed <- table[,label_columns_names[1]]
-        table$mixed(is.null(table$mixed)) <- table[is.null(table$mixed),label_columns_names[2]]
+        de_table$mixed <- de_table[,label_columns_names[1]]
+        de_table$mixed(is.null(de_table$mixed)) <- de_table[is.null(de_table$mixed),label_columns_names[2]]
       }
       
       g <- g + geom_label_repel(
-        data = table[table$mixed %in% genes_to_label,],
+        data = de_table[de_table$mixed %in% genes_to_label,],
         aes(label= mixed,color = as.factor(change)),
         min.segment.length = unit(0.01,"cm"),
         size = label_size,
@@ -169,15 +161,15 @@ if (!is.null(genes_to_label)) {
       stop("Please choose only one column for hgnc/ensembl IDs")
     } else {
       
-      keep <- match(genes_to_label,table[,label_columns_names])
+      keep <- match(genes_to_label,de_table[,label_columns_names])
       
       g <- g + geom_label_repel(
-        data = table[keep,],
-        aes(label= table[keep,label_columns_names],color = as.factor(change)),
+        data = de_table[keep,],
+        aes(label= de_table[keep,label_columns_names],color = as.factor(change)),
         min.segment.length = unit(0.01,"cm"),
         size = label_size,
         alpha = label_alpha,
-        max.overlaps = max_overlaps
+        max.overlaps = max_overlaps, show.legend = F
       )
     }
   } else {
@@ -191,3 +183,4 @@ if (!is.null(genes_to_label)) {
 g
 
 }
+
