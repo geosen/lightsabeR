@@ -69,9 +69,9 @@ volcano_sen <- function(de_table, title = "Cond_Up vs Cond_Down", significanceMe
   }
   ##Volcano code
   de_table <- de_table %>%
-    dplyr::mutate(change = case_when(get(significanceMeasure) < 0.05 & logFC > 0.58 ~ "Upregulated",
-                                     get(significanceMeasure) < 0.05 & logFC < -0.58 ~ "Downregulated",
-                                     get(significanceMeasure) > 0.05 | abs(logFC) <= 0.58 ~ "Insignificant"))
+    dplyr::mutate(change = case_when(get(significanceMeasure) < thresSig & logFC > thresLogFC ~ "Upregulated",
+                                     get(significanceMeasure) < thresSig & logFC < -thresLogFC ~ "Downregulated",
+                                     get(significanceMeasure) > thresSig | abs(logFC) <= thresLogFC ~ "Insignificant"))
   
   
   ##creating base plot
