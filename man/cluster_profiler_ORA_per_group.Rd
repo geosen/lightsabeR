@@ -10,6 +10,7 @@ cluster_profiler_ORA_per_group(
   group_column = "gene_groups",
   organism = "Homo sapiens",
   groups = NULL,
+  ids_type = c("hgnc_symbol", "ensembl_gene_id"),
   export_to_xlsx = FALSE,
   collections = c("H", "C2;CP", "C5;GO:BP"),
   pvalueCutoff = 0.05,
@@ -17,7 +18,8 @@ cluster_profiler_ORA_per_group(
   pAdjustMethod = "BH",
   minGSSize = 10,
   maxGSSize = 500,
-  qvalueCutoff = 1
+  qvalueCutoff = 1,
+  useBackground = T
 )
 }
 \arguments{

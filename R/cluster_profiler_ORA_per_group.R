@@ -39,6 +39,7 @@ cluster_profiler_ORA_per_group <- function(df,
                                  group_column = 'gene_groups',
                                  organism = 'Homo sapiens',
                                  groups = NULL,
+                                 ids_type = c('hgnc_symbol','ensembl_gene_id'),
                                  export_to_xlsx = FALSE,
                                  collections = c('H','C2;CP','C5;GO:BP'),
                                  pvalueCutoff = 0.05,
@@ -46,7 +47,8 @@ cluster_profiler_ORA_per_group <- function(df,
                                  pAdjustMethod = 'BH',
                                  minGSSize = 10,
                                  maxGSSize = 500,
-                                 qvalueCutoff = 1) {
+                                 qvalueCutoff = 1,
+                                 useBackground = T) {
   
   if(!requireNamespace("clusterProfiler")) {
     stop('Please load clusterProfiler to continue')
@@ -65,14 +67,20 @@ cluster_profiler_ORA_per_group <- function(df,
     stop('Please load msigdbr to continue')
   }
   
-
+  #handle ids_type
+  ids_type <- match.arg(ids_type)
+  
+  #removing ensembl version in case there is one
+  if(ids_type == 'ensembl_gene_id') {
+    df[,gene_id_cols] <- lightsabeR::remove_version(df[,gene_id_cols])
+  }
   
   if(!is.null(groups)) {
     cat('Proceeding with selected groups:\n')
     cat(paste0(groups))
   } else {
       groups = levels(as.factor(df[,group_column]))
-  }
+      }
   
   
   if(export_to_xlsx) {
@@ -84,8 +92,11 @@ cluster_profiler_ORA_per_group <- function(df,
   
   #Checking categories
   stopifnot('Invalid category entered. Please check spelling!' = all(pull(categories,1) %in% unique(pull(msigdbr_collections(),'gs_cat'))))
+  
+  if(!all(pull(categories,2) == '')) { #this performs subcategory check only if subcategories are present
   #checking subcategories
   stopifnot('Invalid subcategory entered. Please check spelling!' = all(pull(categories,2) %in% unique(pull(msigdbr_collections(),'gs_subcat'))))
+  
   
   #Gathering genesets
   for (i in 1:dim(categories)[1]) {
@@ -102,18 +113,46 @@ cluster_profiler_ORA_per_group <- function(df,
     }
     
   }
+  } else { #if subcategories are not present
+    for (i in 1:dim(categories)[1]) {
+      
+      if(i == 1) {
+        genesets <- msigdbr(species = organism,
+                            category= categories[i,1])
+      } else {
+        genesets <- genesets %>%
+          bind_rows(msigdbr(species = organism,
+                            category= categories[i,1]))
+      }
+      
+    }
+    
+  }
   
+  
+  if(useBackground){
+    
   ##creating background
   background <- df %>%
     filter(!duplicated(get(gene_id_cols)),!is.na(get(gene_id_cols)), get(gene_id_cols) != '') %>%
     pull(get(gene_id_cols))
-  
+  }
   
   ##Creating Term2Gene
+  if(ids_type == 'hgnc_symbol'){
   t2g_cp <- genesets %>%
     dplyr::distinct(gs_name,
                     gene_symbol) %>%
     as.data.frame()
+  } else if(ids_type == 'ensembl_gene_id') {
+    t2g_cp <- genesets %>%
+      dplyr::distinct(gs_name,
+                      ensembl_gene) %>%
+      dplyr::select(gs_name, gene_symbol = ensembl_gene) %>%
+      as.data.frame()
+  } else {
+    stop('Please provide a valid ids_type value')
+  }
   
   #creating list for storing results
   cp_res <- list()
@@ -123,15 +162,18 @@ cluster_profiler_ORA_per_group <- function(df,
     
     #selecting group
     group <- groups[i]
+    
     #isolating gene list
     genes <- df %>%
       filter(get(group_column) == group) %>%
-      mutate(geneSymb = lightsabeR::remove_version(get(gene_id_cols))) %>%
+      mutate(geneSymb = get(gene_id_cols)) %>%
       dplyr::select(geneSymb)
     
     if(length(intersect(genes$geneSymb,t2g_cp$gene_symbol)) != 0){
       
     #running enrichment
+      if(useBackground){
+        
     cpMod <- enricher(genes$geneSymb,
                       pvalueCutoff = pvalueCutoff,
                       pAdjustMethod = pAdjustMethod,
@@ -140,6 +182,15 @@ cluster_profiler_ORA_per_group <- function(df,
                       maxGSSize = maxGSSize,
                       qvalueCutoff = qvalueCutoff,
                       TERM2GENE = t2g_cp)
+      } else {
+      cpMod <- enricher(genes$geneSymb,
+                        pvalueCutoff = pvalueCutoff,
+                        pAdjustMethod = pAdjustMethod,
+                        minGSSize = minGSSize,
+                        maxGSSize = maxGSSize,
+                        qvalueCutoff = qvalueCutoff,
+                        TERM2GENE = t2g_cp)
+      }
     
     cp_res[[group]] <- cpMod
     
