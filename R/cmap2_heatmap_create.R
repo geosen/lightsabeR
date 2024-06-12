@@ -89,13 +89,16 @@ label_column <- match.arg(label_column)
 #determine top entries
 if(direction == 'both') {
   cmap_top <- cmap_melted %>%
-    slice_max(abs(norm_cs), n = n_top)
+    slice_max(abs(norm_cs), n = n_top) %>%
+    arrange(desc(norm_cs))
   } else if(direction == 'normal') {
     cmap_top <- cmap_melted %>%
-      slice_max(norm_cs, n = n_top)
+      slice_max(norm_cs, n = n_top) %>%
+      arrange(desc(norm_cs))
   } else if(direction == 'reverse') {
     cmap_top <- cmap_melted %>%
-      slice_min(norm_cs, n = n_top)
+      slice_min(norm_cs, n = n_top) %>%
+      arrange(desc(norm_cs))
   } else {
   stop('direction should be one of: both, normal, reverse')
     }
@@ -126,12 +129,12 @@ for (i in 1:length(annot_list)) {
       no_of_colors <- length(unique(x))
       if(no_of_colors <= RColorBrewer::brewer.pal.info[brewer_palette_qual,"maxcolors"]){
         colors1 <- RColorBrewer::brewer.pal(no_of_colors, brewer_palette_qual)
-        names(colors1) <- unique(x)
+        names(colors1) <- levels(as.factor((x)))
       
       } else {
         set.seed(7)
         colors1 <- colors()[sample(1:657,no_of_colors)]
-        names(colors1) <- unique(x)
+        names(colors1) <- levels(as.factor((x)))
       
       }
       annot_colors[[i]] <- colors1[!is.na(names(colors1))] #return any values without NA colnames
@@ -159,6 +162,7 @@ ht <- ComplexHeatmap::Heatmap(as.matrix(cmap_top[,c('norm_cs')]),
                         row_labels = cmap_top[,label_column],
                         column_labels = 'Normalized\nConnectivity\nScore',
                         col = CS, 
+                        cluster_rows = F,
                         border_gp = gpar(col = border_color, 
                                          lty = border_linetype, 
                                          lwd = border_linewidth),

@@ -50,10 +50,10 @@ wgcna_module_stringdb_network_plot <- function(net,layout = 'igraph',algorithm =
   #fifth step - visualizing network
   set.seed(7)
   #layout
-  layout <- create_layout(net, layout = "igraph", algorithm = igraph_layout_algorithm)
+  layout <- create_layout(net, layout = "igraph", algorithm = algorithm)
   #layout2 <- create_layout(net, layout = "igraph", algorithm = 'dh')
   
-  g <- ggraph(net, layout = layout2) +
+  g <- ggraph(net, layout = layout) +
     geom_edge_link(alpha = edge_alpha) + 
     geom_node_point(size = node_size_vec, 
                     shape = node_shape, 
