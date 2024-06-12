@@ -40,6 +40,9 @@ wgcna_module_stringdb_network_plot <- function(net,layout = 'igraph',algorithm =
     stop('Please load igraph to continue')
   }
   
+  #getting vertices attributes
+  vertices <- vertex_attr(net)
+  
   if(is.null(node_size_vec)) {
     node_size_vec <- (1.5*degree(net)/(mean(degree(net)))+4)
   }
@@ -51,7 +54,7 @@ wgcna_module_stringdb_network_plot <- function(net,layout = 'igraph',algorithm =
   set.seed(7)
   #layout
   layout <- create_layout(net, layout = "igraph", algorithm = algorithm)
-  #layout2 <- create_layout(net, layout = "igraph", algorithm = 'dh')
+  
   
   g <- ggraph(net, layout = layout) +
     geom_edge_link(alpha = edge_alpha) + 
